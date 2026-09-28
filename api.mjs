@@ -5,7 +5,7 @@ const clean = (v, n) => String(v ?? "").trim().slice(0, n);
 
 export default async (req) => {
   const store = getStore("eggshop");
-  const route = new URL(req.url).pathname.replace(/^\/api\//, "").replace(/\/$/, "");
+  const route = new URL(req.url).pathname.replace(/^\/(\.netlify\/functions\/)?api\/?/, "").replace(/\/$/, "");
   const isAdmin = () => !!process.env.ADMIN_PASSWORD && req.headers.get("x-admin-password") === process.env.ADMIN_PASSWORD;
   const getInv = async () => (await store.get("inventory", { type: "json" })) || { cur: "", items: {} };
 
@@ -58,4 +58,4 @@ export default async (req) => {
     return json({ error: "Server error: " + (e && e.message ? e.message : String(e)) }, 500);
   }
 };
-export const config = { path: "/api/*" };
+export const config = { path: ["/api", "/api/*"] };
